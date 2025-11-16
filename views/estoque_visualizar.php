@@ -1,0 +1,119 @@
+<?php
+
+
+session_start();
+require_once '../config/db_connect.php';
+
+if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
+    $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
+    header("Location: login.php");
+    exit();
+}
+
+try {
+    $stmt = $pdo->prepare("SELECT id, nome, tipo, quantidade, status_equipamento FROM estoque ORDER BY nome ASC");
+    $stmt->execute();
+    $itens_estoque = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $erro_banco = "Erro ao buscar itens do estoque: " . $e->getMessage();
+    $itens_estoque = [];
+}
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Status dos Equipamentos</title>
+    
+    <link rel="stylesheet" href="../assets/css/style.css">
+
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>ChemistLab</h3>
+        <a href="dashboard.php">Início</a>
+        <a href="relatorios.php">Relatórios</a>
+        <a href="calendario.php">Calendário</a>
+        <a href="estoque_visualizar.php" class="active">Equipamentos (Status)</a>
+        <a href="estoque_cadastrar.php">Cadastrar Equipamento</a>
+        <a href="perfil.php">Perfil</a>
+        <a href="../controllers/processa_logout.php" class="logout">Sair</a>
+    </div>
+
+    <div class="content">
+        <div class="card">
+            
+            <h2>Status dos Equipamentos</h2>
+            
+            <?php
+            if (isset($_SESSION['success_message'])) {
+                echo '<div class="message success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
+                unset($_SESSION['success_message']);
+            }
+            if (isset($_SESSION['error_message'])) {
+                echo '<div class="message error">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+                unset($_SESSION['error_message']);
+            }
+            if (isset($erro_banco)) {
+                echo '<div class="message error">' . htmlspecialchars($erro_banco) . '</div>';
+            }
+            ?>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Qtd.</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($itens_estoque)): ?>
+                        <tr>
+                            <td colspan="5">Nenhum item cadastrado ainda.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($itens_estoque as $item): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($item['nome']); ?></td>
+                                <td><?php echo htmlspecialchars($item['tipo']); ?></td>
+                                <td><?php echo htmlspecialchars($item['quantidade']); ?></td>
+                                <td>
+                                    <?php
+                                    $status = $item['status_equipamento'];
+                                    $classe_status = ''; 
+
+                                    if ($status == 'Disponível') {
+                                        $classe_status = 'status-disponivel';
+                                    } elseif ($status == 'Em manutenção') {
+                                        $classe_status = 'status-manutencao';
+                                    } elseif ($status == 'Indisponível') {
+                                        $classe_status = 'status-indisponivel';
+                                    }
+                                    
+                                    echo '<span class="status ' . $classe_status . '">' . htmlspecialchars($status) . '</span>';
+                                    ?>
+                                </td>
+                                
+                                <td class="acoes">
+                                    <a href="estoque_editar.php?id=<?php echo $item['id']; ?>" class="action-link editar">Editar</a>
+                                    <a href="../controllers/processa_estoque_delete.php?id=<?php echo $item['id']; ?>" 
+                                       class="action-link deletar" 
+                                       onclick="return confirm('Tem certeza que deseja excluir este item: <?php echo htmlspecialchars(addslashes($item['nome'])); ?>?');">
+                                       Deletar
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+
+</body>
+</html>
