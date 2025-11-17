@@ -34,7 +34,7 @@ echo "Iniciando script de cadastro do Regente...<br>";
 $host = 'localhost';
 $dbname = 'chemistlab'; 
 $user = 'postgres';
-$password = '1234'; // Ajuste a senha do seu banco aqui
+$password = '1234'; 
 
 $nome_regente = "Admin Regente";
 $cpf_regente = "000.000.000-00";
@@ -46,7 +46,6 @@ try {
     $pdo = new PDO($dsn, $user, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Verificação: O usuário já existe?
     $stmt_check = $pdo->prepare("SELECT id FROM usuarios WHERE cpf = :cpf");
     $stmt_check->bindParam(':cpf', $cpf_regente);
     $stmt_check->execute();
