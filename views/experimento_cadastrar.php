@@ -21,11 +21,18 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
     
     <link rel="stylesheet" href="../assets/css/style.css">
 
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
 </head>
 <body>
 
     <div class="sidebar">
-        <h3>ChemistLab</h3>
+        <div class="logo">
+            <a href="dashboard.php">
+                <img src="../assets/images/logo.png" alt="ChemistLab Logo">
+                <h3>ChemistLab</h3>
+            </a>
+        </div>
         <a href="dashboard.php">Início</a>
         <a href="relatorios.php" class="active">Relatórios</a>
         <a href="calendario.php">Calendário</a>
