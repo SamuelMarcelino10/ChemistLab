@@ -47,7 +47,6 @@ $nome_usuario = $_SESSION['usuario_nome'];
         <h2>Dashboard</h2>
         
         <div class="card">
-            <h3>Acessos Recentes</h3>
             <p>Bem-vindo ao sistema de gerenciamento do laboratório.</p>
             <p>Use o menu ao lado para navegar entre as funcionalidades.</p>
         </div>
