@@ -1,8 +1,11 @@
 <?php
 
-
 session_start();
-require_once '../config/db_connect.php'; 
+require_once '../config/db_connect.php';
+
+require_once '../models/entidades/experimento.php';
+require_once '../models/dao/experimentoDao.php';
+
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: ../views/login.php"); exit();
 }
@@ -10,43 +13,25 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
     header("Location: ../views/dashboard.php"); exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$titulo = filter_input(INPUT_POST, 'titulo', FILTER_SANITIZE_SPECIAL_CHARS);
+$materiais = filter_input(INPUT_POST, 'materiais', FILTER_SANITIZE_SPECIAL_CHARS);
+$descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_SPECIAL_CHARS);
+$regente_id = $_SESSION['usuario_id']; 
 
-    $titulo = $_POST['titulo'];
-    $materiais = $_POST['materiais'];
-    $descricao = $_POST['descricao'];
-    $regente_id = $_SESSION['usuario_id']; 
+$experimento = new \chemistLab\models\entidades\experimento(
+    $titulo, 
+    $materiais, 
+    $descricao,
+    $regente_id 
+);
 
-    if (empty($titulo)) {
-        $_SESSION['error_message'] = "O Título do experimento é obrigatório.";
-        header("Location: ../views/experimento_cadastrar.php");
-        exit();
-    }
+$experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
 
-    try {
-        $sql = "INSERT INTO experimentos (titulo, materiais, descricao, regente_id) 
-                VALUES (:titulo, :materiais, :descricao, :regente_id)";
-        
-        $stmt = $pdo->prepare($sql);
-        
-        $stmt->bindParam(':titulo', $titulo);
-        $stmt->bindParam(':materiais', $materiais);
-        $stmt->bindParam(':descricao', $descricao);
-        $stmt->bindParam(':regente_id', $regente_id, PDO::PARAM_INT);
-        
-        $stmt->execute();
-
-        $_SESSION['success_message'] = "Experimento '".htmlspecialchars($titulo)."' cadastrado com sucesso!";
-        header("Location: ../views/experimento_cadastrar.php"); 
-        exit();
-
-    } catch (PDOException $e) {
-        $_SESSION['error_message'] = "Erro no sistema ao salvar experimento: " . $e->getMessage();
-        header("Location: ../views/experimento_cadastrar.php");
-        exit();
-    }
+if ($experimentoDao->save($experimento)) {
+    $_SESSION['success_message'] = "Experimento cadastrado com sucesso!";
+    header("Location: ../views/relatorios.php");
 } else {
-    header("Location: ../views/dashboard.php");
-    exit();
+    $_SESSION['error_message'] = "Erro ao cadastrar experimento. Tente novamente.";
+    header("Location: ../views/experimento_cadastrar.php");
 }
-?>
+exit();

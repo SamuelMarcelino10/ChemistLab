@@ -1,8 +1,9 @@
 <?php
 
-
 session_start();
-require_once '../config/db_connect.php';
+require_once '../config/db_connect.php'; 
+
+require_once '../models/dao/equipamentoDao.php'; 
 
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
@@ -11,9 +12,10 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, nome, tipo, quantidade, status_equipamento FROM estoque ORDER BY nome ASC");
-    $stmt->execute();
-    $itens_estoque = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $equipamentoDao = new \chemistLab\models\dao\equipamentoDao($pdo);
+
+    $itens_estoque = $equipamentoDao->findAll(); 
+
 } catch (PDOException $e) {
     $erro_banco = "Erro ao buscar itens do estoque: " . $e->getMessage();
     $itens_estoque = [];

@@ -3,6 +3,8 @@
 session_start();
 require_once '../config/db_connect.php';
 
+require_once '../models/dao/experimentoDao.php';
+
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: ../views/login.php"); exit();
 }
@@ -10,27 +12,26 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
     header("Location: ../views/dashboard.php"); exit();
 }
 
-$experimento_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+$item_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-if (!$experimento_id) {
-    $_SESSION['error_message'] = "ID do experimento não fornecido.";
+if (!$item_id) {
+    $_SESSION['error_message'] = "ID do experimento inválido.";
     header("Location: ../views/relatorios.php");
     exit();
 }
 
 try {
-    $sql = "DELETE FROM experimentos WHERE id = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':id', $experimento_id, PDO::PARAM_INT);
-    $stmt->execute();
+    $experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
 
-    $_SESSION['success_message'] = "Experimento excluído com sucesso!";
-    header("Location: ../views/relatorios.php");
-    exit();
+    if ($experimentoDao->delete($item_id)) {
+        $_SESSION['success_message'] = "Experimento excluído com sucesso!";
+    } else {
+        $_SESSION['error_message'] = "Erro ao excluir experimento. Tente novamente.";
+    }
 
 } catch (PDOException $e) {
-    $_SESSION['error_message'] = "Erro no sistema ao excluir o experimento: " . $e->getMessage();
-    header("Location: ../views/relatorios.php");
-    exit();
+    $_SESSION['error_message'] = "Erro de banco de dados: " . $e->getMessage();
 }
-?>
+
+header("Location: ../views/relatorios.php");
+exit();

@@ -1,8 +1,10 @@
 <?php
 
-
 session_start();
 require_once '../config/db_connect.php'; 
+
+require_once '../models/dao/experimentoDao.php'; 
+
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
     header("Location: login.php");
@@ -10,9 +12,10 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, titulo, descricao FROM experimentos ORDER BY id DESC");
-    $stmt->execute();
-    $experimentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
+
+    $experimentos = $experimentoDao->findAll();
+    
 } catch (PDOException $e) {
     $erro_banco = "Erro ao buscar experimentos: " . $e->getMessage();
     $experimentos = [];

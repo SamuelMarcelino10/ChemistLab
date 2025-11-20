@@ -1,8 +1,10 @@
 <?php
 
-
 session_start();
 require_once '../config/db_connect.php';
+
+require_once '../models/entidades/equipamento.php';
+require_once '../models/dao/equipamentoDao.php';
 
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: login.php"); exit();
@@ -18,16 +20,18 @@ if (!$item_id) {
     exit();
 }
 
-try {
-    $stmt = $pdo->prepare("SELECT * FROM estoque WHERE id = :id");
-    $stmt->bindParam(':id', $item_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $item = $stmt->fetch(PDO::FETCH_ASSOC);
+$equipamento = null; 
 
-    if (!$item) {
+try {
+    $equipamentoDao = new \chemistLab\models\dao\equipamentoDao($pdo);
+
+    $equipamento = $equipamentoDao->findById($item_id); 
+
+    if (!$equipamento) {
         header("Location: estoque_visualizar.php");
         exit();
     }
+    
 } catch (PDOException $e) {
     die("Erro ao buscar item: " . $e->getMessage());
 }
@@ -36,10 +40,9 @@ try {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Item</title>
+    <title>Editar Item: <?php echo htmlspecialchars($equipamento->getNome()); ?></title>
     
     <link rel="stylesheet" href="../assets/css/style.css">
-
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
 </head>
@@ -63,48 +66,42 @@ try {
 
     <div class="content">
         <div class="card">
-            <h2>Editar Item: <?php echo htmlspecialchars($item['nome']); ?></h2>
+            <h2>Editar Item: <?php echo htmlspecialchars($equipamento->getNome()); ?></h2>
 
             <form action="../controllers/processa_estoque_update.php" method="POST">
                 
-                <input type="hidden" name="id" value="<?php echo $item['id']; ?>">
+                <input type="hidden" name="id" value="<?php echo $equipamento->getId(); ?>">
 
                 <div class="form-group">
                     <label for="nome">Nome do Item:</label>
-                    <input type="text" id="nome" name="nome" value="<?php echo htmlspecialchars($item['nome']); ?>" required>
+                    <input type="text" id="nome" name="nome" value="<?php echo htmlspecialchars($equipamento->getNome()); ?>" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="tipo">Tipo:</label>
                     <select id="tipo" name="tipo">
-                        <option value="Equipamento" <?php if($item['tipo'] == 'Equipamento') echo 'selected'; ?>>Equipamento</option>
-                        <option value="Insumo" <?php if($item['tipo'] == 'Insumo') echo 'selected'; ?>>Insumo</option>
-                        <option value="Reagente" <?php if($item['tipo'] == 'Reagente') echo 'selected'; ?>>Reagente</option>
-                        <option value="Outro" <?php if($item['tipo'] == 'Outro') echo 'selected'; ?>>Outro</option>
+                        <option value="Equipamento" <?php if($equipamento->getTipo() == 'Equipamento') echo 'selected'; ?>>Equipamento</option>
+                        <option value="Insumo" <?php if($equipamento->getTipo() == 'Insumo') echo 'selected'; ?>>Insumo</option>
+                        <option value="Reagente" <?php if($equipamento->getTipo() == 'Reagente') echo 'selected'; ?>>Reagente</option>
+                        <option value="Outro" <?php if($equipamento->getTipo() == 'Outro') echo 'selected'; ?>>Outro</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="descricao">Descrição:</label>
-                    <textarea id="descricao" name="descricao" rows="3"><?php echo htmlspecialchars($item['descricao']); ?></textarea>
-                </div>
-
-                <div class="form-group">
                     <label for="quantidade">Quantidade:</label>
-                    <input type="number" id="quantidade" name="quantidade" value="<?php echo htmlspecialchars($item['quantidade']); ?>" min="0" required>
+                    <input type="number" id="quantidade" name="quantidade" value="<?php echo htmlspecialchars($equipamento->getQuantidade()); ?>" min="0" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="unidade_medida">Unidade de Medida:</label>
-                    <input type="text" id="unidade_medida" name="unidade_medida" value="<?php echo htmlspecialchars($item['unidade_medida']); ?>">
+                    <input type="text" id="unidade_medida" name="unidade_medida" value="<?php echo htmlspecialchars($equipamento->getUnidadeMedida()); ?>">
                 </div>
 
                 <div class="form-group">
-                    <label for="status_equipamento">Status (CDU07):</label>
-                    <select id="status_equipamento" name="status_equipamento">
-                        <option value="Disponível" <?php if($item['status_equipamento'] == 'Disponível') echo 'selected'; ?>>Disponível</option>
-                        <option value="Em manutenção" <?php if($item['status_equipamento'] == 'Em manutenção') echo 'selected'; ?>>Em manutenção</option>
-                        <option value="Indisponível" <?php if($item['status_equipamento'] == 'Indisponível') echo 'selected'; ?>>Indisponível</option>
+                    <label for="status_equipamento">Status:</label> <select id="status_equipamento" name="status_equipamento">
+                        <option value="Disponível" <?php if($equipamento->getStatusEquipamento() == 'Disponível') echo 'selected'; ?>>Disponível</option>
+                        <option value="Em manutenção" <?php if($equipamento->getStatusEquipamento() == 'Em manutenção') echo 'selected'; ?>>Em manutenção</option>
+                        <option value="Indisponível" <?php if($equipamento->getStatusEquipamento() == 'Indisponível') echo 'selected'; ?>>Indisponível</option>
                     </select>
                 </div>
 

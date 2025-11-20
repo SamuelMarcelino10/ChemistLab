@@ -1,54 +1,39 @@
 <?php
 
 session_start();
+require_once '../config/db_connect.php'; 
 
-require_once '../config/db_connect.php';
+require_once '../models/entidades/usuario.php'; 
+require_once '../models/dao/usuarioDao.php'; 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$cpf = filter_input(INPUT_POST, 'cpf', FILTER_SANITIZE_SPECIAL_CHARS);
+$senha_digitada = filter_input(INPUT_POST, 'senha', FILTER_SANITIZE_SPECIAL_CHARS);
 
-    $cpf = $_POST['cpf'];
-    $senha = $_POST['senha'];
-
-    if (empty($cpf) || empty($senha)) {
-        $_SESSION['login_error'] = "CPF e Senha são obrigatórios.";
-        header("Location: ../views/login.php"); 
-        exit();
-    }
-
-    try {
-
-        $stmt = $pdo->prepare("SELECT id, nome_completo, senha, tipo_conta FROM usuarios WHERE cpf = :cpf");
-        $stmt->bindParam(':cpf', $cpf);
-        $stmt->execute();
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC); 
-
-
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
-            
-
-            $_SESSION['autenticado'] = true;
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nome'] = $usuario['nome_completo'];
-            $_SESSION['usuario_tipo'] = $usuario['tipo_conta']; 
-
-
-            header("Location: ../views/dashboard.php");
-            exit();
-
-        } else {
-            $_SESSION['login_error'] = "CPF ou Senha inválidos.";
-            header("Location: ../views/login.php"); 
-            exit();
-        }
-
-    } catch (PDOException $e) {
-        $_SESSION['login_error'] = "Erro no sistema. Tente novamente mais tarde.";
-
-        header("Location: ../views/login.php");
-        exit();
-    }
-} else {
-    echo "Acesso negado.";
+if (empty($cpf) || empty($senha_digitada)) {
+    $_SESSION['login_error'] = "Preencha todos os campos.";
+    header("Location: ../views/login.php");
     exit();
 }
-?>
+
+try {
+    $usuarioDao = new \chemistLab\models\dao\usuarioDao($pdo);
+
+    $usuario = $usuarioDao->findByCpf($cpf);
+
+    if ($usuario && password_verify($senha_digitada, $usuario->getSenha())) {
+        $_SESSION['autenticado'] = true;
+        $_SESSION['usuario_id'] = $usuario->getId();
+        $_SESSION['usuario_nome'] = $usuario->getNomeCompleto();
+        $_SESSION['usuario_tipo'] = $usuario->getTipoConta(); 
+        
+        header("Location: ../views/dashboard.php");
+    } else {
+        $_SESSION['login_error'] = "CPF ou senha incorretos.";
+        header("Location: ../views/login.php");
+    }
+
+} catch (PDOException $e) {
+    $_SESSION['login_error'] = "Erro de conexão com o banco: " . $e->getMessage();
+    header("Location: ../views/login.php");
+}
+exit();

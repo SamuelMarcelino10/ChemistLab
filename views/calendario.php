@@ -1,8 +1,9 @@
 <?php
 
-
 session_start();
 require_once '../config/db_connect.php'; 
+
+require_once '../models/dao/agendamentoDao.php'; 
 
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
@@ -11,12 +12,10 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, data_aula, turno, nome_professor, nome_experimento 
-                            FROM agendamentos 
-                            WHERE data_aula >= CURRENT_DATE 
-                            ORDER BY data_aula ASC, turno ASC");
-    $stmt->execute();
-    $agendamentos_futuros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
+
+    $agendamentos_futuros = $agendamentoDao->findFuture();
+    
 } catch (PDOException $e) {
     $erro_banco = "Erro ao buscar agendamentos: " . $e->getMessage();
     $agendamentos_futuros = [];

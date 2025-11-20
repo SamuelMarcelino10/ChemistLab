@@ -1,8 +1,10 @@
 <?php
 
-
 session_start();
 require_once '../config/db_connect.php';
+
+require_once '../models/entidades/usuario.php'; 
+require_once '../models/dao/usuarioDao.php';
 
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
@@ -17,18 +19,20 @@ $cpf_usuario = "";
 $tipo_conta = "";
 
 try {
-    $stmt = $pdo->prepare("SELECT nome_completo, email, cpf, tipo_conta FROM usuarios WHERE id = :id");
-    $stmt->bindParam(':id', $usuario_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $usuarioDao = new \chemistLab\models\dao\usuarioDao($pdo);
+    
+    $usuario = $usuarioDao->findById($usuario_id);
 
     if ($usuario) {
-        $nome_usuario = $usuario['nome_completo'];
-        $email_usuario = $usuario['email'];
-        $cpf_usuario = $usuario['cpf'];
-        $tipo_conta = $usuario['tipo_conta'];
+        $nome_usuario = $usuario->getNomeCompleto();
+        $email_usuario = $usuario->getEmail();
+        $cpf_usuario = $usuario->getCpf();
+        $tipo_conta = $usuario->getTipoConta();
         
-        $_SESSION['usuario_nome'] = $usuario['nome_completo'];
+        $_SESSION['usuario_nome'] = $nome_usuario; 
+    } else {
+        header("Location: ../controllers/processa_logout.php");
+        exit();
     }
 } catch (PDOException $e) {
     $erro_banco = "Erro ao buscar dados do perfil: " . $e->getMessage();
