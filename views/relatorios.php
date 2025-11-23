@@ -28,7 +28,6 @@ try {
     <title>Relatórios de Experimentos</title>
     
     <link rel="stylesheet" href="../assets/css/style.css">
-
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
 </head>
@@ -83,12 +82,21 @@ try {
                     <?php foreach ($experimentos as $exp): ?>
                         <li class="item">
                             <h4><?php echo htmlspecialchars($exp['titulo']); ?></h4>
-                            <p><strong>Descrição:</strong> <?php echo nl2br(htmlspecialchars($exp['descricao'])); ?></p>
+                            
+                            <p><strong>Descrição:</strong> 
+                                <?php 
+                                    $texto = html_entity_decode($exp['descricao']);
+                                    
+                                    $texto_com_br = nl2br($texto);
+                                    
+                                    echo $texto_com_br; 
+                                ?>
+                            </p>
                             
                             <a href="../controllers/processa_experimento_delete.php?id=<?php echo $exp['id']; ?>"
                                class="action-link-delete"
                                onclick="return confirm('Tem certeza que deseja excluir este experimento: <?php echo htmlspecialchars(addslashes($exp['titulo'])); ?>?');">
-                               Deletar Experimento
+                                Deletar Experimento
                             </a>
                         </li>
                     <?php endforeach; ?>

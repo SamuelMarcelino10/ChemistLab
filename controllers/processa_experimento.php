@@ -14,15 +14,16 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
 }
 
 $titulo = filter_input(INPUT_POST, 'titulo', FILTER_SANITIZE_SPECIAL_CHARS);
-$materiais = filter_input(INPUT_POST, 'materiais', FILTER_SANITIZE_SPECIAL_CHARS);
-$descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_SPECIAL_CHARS);
-$regente_id = $_SESSION['usuario_id']; 
+$materiais = filter_input(INPUT_POST, 'materiais', FILTER_DEFAULT); 
+$descricao = filter_input(INPUT_POST, 'descricao', FILTER_DEFAULT); 
+
+$regente_id = $_SESSION['usuario_id'];
 
 $experimento = new \chemistLab\models\entidades\experimento(
     $titulo, 
     $materiais, 
     $descricao,
-    $regente_id 
+    $regente_id
 );
 
 $experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
