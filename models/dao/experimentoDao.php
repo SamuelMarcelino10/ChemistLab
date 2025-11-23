@@ -22,7 +22,7 @@ class experimentoDao {
             ':titulo' => $experimento->getTitulo(),
             ':materiais' => $experimento->getMateriais(),
             ':descricao' => $experimento->getDescricao(),
-            ':regente_id' => $experimento->getRegenteId() 
+            ':regente_id' => $experimento->getRegenteId()
         ]);
     }
     
@@ -33,6 +33,44 @@ class experimentoDao {
                 
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function findById($id) {
+        $sql = "SELECT id, titulo, materiais, descricao, regente_id FROM experimentos WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$data) {
+            return null;
+        }
+
+        return new \chemistLab\models\entidades\experimento(
+            $data['titulo'],
+            $data['materiais'],
+            $data['descricao'],
+            $data['regente_id'], 
+            $data['id']
+        );
+    }
+    
+    public function update(experimento $experimento) {
+        $sql = "UPDATE experimentos SET 
+                titulo = :titulo, 
+                materiais = :materiais, 
+                descricao = :descricao 
+                WHERE id = :id";
+        
+        $stmt = $this->pdo->prepare($sql);
+        
+        return $stmt->execute([
+            ':titulo' => $experimento->getTitulo(),
+            ':materiais' => $experimento->getMateriais(),
+            ':descricao' => $experimento->getDescricao(),
+            ':id' => $experimento->getId()
+        ]);
     }
     
     public function delete($id) {

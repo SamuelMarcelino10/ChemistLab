@@ -11,10 +11,15 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     exit();
 }
 
+$search_term = '';
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $search_term = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_SPECIAL_CHARS);
+}
+
 try {
     $equipamentoDao = new \chemistLab\models\dao\equipamentoDao($pdo);
 
-    $itens_estoque = $equipamentoDao->findAll(); 
+    $itens_estoque = $equipamentoDao->findAll($search_term); 
 
 } catch (PDOException $e) {
     $erro_banco = "Erro ao buscar itens do estoque: " . $e->getMessage();
@@ -28,7 +33,6 @@ try {
     <title>Status dos Equipamentos</title>
     
     <link rel="stylesheet" href="../assets/css/style.css">
-
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
 </head>
@@ -55,6 +59,16 @@ try {
             
             <h2>Status dos Equipamentos</h2>
             
+            <form method="GET" action="estoque_visualizar.php" class="form-group" style="display: flex; gap: 10px;">
+                <input type="text" name="search" placeholder="Buscar por Nome ou Tipo..." 
+                       value="<?php echo htmlspecialchars($search_term); ?>" style="flex-grow: 1;">
+                <button type="submit" class="btn btn-primary" style="width: auto; padding: 10px 15px;">🔍 Buscar</button>
+                <?php if ($search_term): ?>
+                    <a href="estoque_visualizar.php" class="btn btn-editar" style="width: auto; padding: 10px 15px;">Limpar</a>
+                <?php endif; ?>
+            </form>
+            <br>
+
             <?php
             if (isset($_SESSION['success_message'])) {
                 echo '<div class="message success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';

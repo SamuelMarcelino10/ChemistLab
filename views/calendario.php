@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once '../config/db_connect.php'; 
 
@@ -28,7 +27,6 @@ try {
     <title>Calendário e Agendamentos</title>
     
     <link rel="stylesheet" href="../assets/css/style.css">
-
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
 
 </head>
@@ -82,7 +80,11 @@ try {
                 <?php else: ?>
                     <?php foreach ($agendamentos_futuros as $aula): ?>
                         <li class="item">
-                            <h4><?php echo htmlspecialchars(date('d/m/Y', strtotime($aula['data_aula']))); ?> - <?php echo htmlspecialchars($aula['turno']); ?></h4>
+                            <h4>
+                                <a href="agendamento_visualizar.php?id=<?php echo $aula['id']; ?>" class="action-link editar">
+                                    <?php echo htmlspecialchars(date('d/m/Y', strtotime($aula['data_aula']))); ?> - <?php echo htmlspecialchars($aula['turno']); ?>
+                                </a>
+                            </h4>
                             <p><strong>Professor(a):</strong> <?php echo htmlspecialchars($aula['nome_professor']); ?></p>
                             <p><strong>Experimento:</strong> <?php echo htmlspecialchars($aula['nome_experimento']); ?></p>
                             

@@ -81,23 +81,31 @@ try {
                 <?php else: ?>
                     <?php foreach ($experimentos as $exp): ?>
                         <li class="item">
-                            <h4><?php echo htmlspecialchars($exp['titulo']); ?></h4>
+                            <h4>
+                                <a href="experimento_visualizar.php?id=<?php echo $exp['id']; ?>" class="action-link editar">
+                                    <?php echo htmlspecialchars($exp['titulo']); ?>
+                                </a>
+                            </h4>
                             
                             <p><strong>Descrição:</strong> 
                                 <?php 
                                     $texto = html_entity_decode($exp['descricao']);
-                                    
                                     $texto_com_br = nl2br($texto);
-                                    
                                     echo $texto_com_br; 
                                 ?>
                             </p>
                             
-                            <a href="../controllers/processa_experimento_delete.php?id=<?php echo $exp['id']; ?>"
-                               class="action-link-delete"
-                               onclick="return confirm('Tem certeza que deseja excluir este experimento: <?php echo htmlspecialchars(addslashes($exp['titulo'])); ?>?');">
-                                Deletar Experimento
-                            </a>
+                            <div class="acoes">
+                                <a href="experimento_editar.php?id=<?php echo $exp['id']; ?>" class="action-link editar" style="margin-right: 15px;">
+                                    Editar
+                                </a>
+
+                                <a href="../controllers/processa_experimento_delete.php?id=<?php echo $exp['id']; ?>"
+                                   class="action-link deletar"
+                                   onclick="return confirm('Tem certeza que deseja excluir este experimento: <?php echo htmlspecialchars(addslashes($exp['titulo'])); ?>?');">
+                                    Deletar Experimento
+                                </a>
+                            </div>
                         </li>
                     <?php endforeach; ?>
                 <?php endif; ?>

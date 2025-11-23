@@ -28,10 +28,22 @@ class equipamentoDao {
         ]);
     }
     
-    public function findAll() {
-        $stmt = $this->pdo->query("SELECT id, nome, tipo, quantidade, status_equipamento 
-                                    FROM estoque 
-                                    ORDER BY nome ASC");
+    public function findAll($searchTerm = null) {
+        $sql = "SELECT id, nome, tipo, quantidade, status_equipamento 
+                FROM estoque";
+        
+        $params = [];
+
+        if ($searchTerm) {
+            $sql .= " WHERE nome ILIKE :search OR tipo ILIKE :search";
+            $params[':search'] = '%' . $searchTerm . '%';
+        }
+        
+        $sql .= " ORDER BY nome ASC";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -49,7 +61,7 @@ class equipamentoDao {
         return new equipamento(
             $data['nome'],
             $data['tipo'],
-            $data['descricao'], 
+            $data['descricao'],
             $data['quantidade'],
             $data['unidade_medida'],
             $data['status_equipamento'],
@@ -72,7 +84,7 @@ class equipamentoDao {
         return $stmt->execute([
             ':nome' => $equipamento->getNome(),
             ':tipo' => $equipamento->getTipo(),
-            ':descricao' => $equipamento->getDescricao(), 
+            ':descricao' => $equipamento->getDescricao(),
             ':quantidade' => $equipamento->getQuantidade(),
             ':unidade_medida' => $equipamento->getUnidadeMedida(),
             ':status' => $equipamento->getStatusEquipamento(),
