@@ -8,10 +8,12 @@ use chemistLab\models\entidades\usuario;
 class usuarioDao {
     private $pdo;
 
+    //recebe conexao do db connect
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
 
+    //busca usuario por cpf
     public function findByCpf($cpf) {
         $stmt = $this->pdo->prepare("SELECT id, nome_completo, email, cpf, senha, tipo_conta 
                                     FROM usuarios 
@@ -35,6 +37,7 @@ class usuarioDao {
         );
     }
     
+    //busca usuario pelo id
     public function findById($id) {
         $stmt = $this->pdo->prepare("SELECT id, nome_completo, email, cpf, tipo_conta 
                                     FROM usuarios 
@@ -58,6 +61,7 @@ class usuarioDao {
         );
     }
     
+    //atualiza usuarios
     public function update(usuario $usuario) {
         $sql = "UPDATE usuarios SET 
                 nome_completo = :nome, 

@@ -4,6 +4,7 @@
 session_start();
 require_once '../config/db_connect.php';
 
+//verificacao inicial
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: login.php"); exit();
 }
@@ -14,6 +15,7 @@ $email_usuario = "";
 $cpf_usuario = "";
 $tipo_conta = "";
 
+//busca dados do perfil no banco
 try {
     $stmt = $pdo->prepare("SELECT nome_completo, email, cpf, tipo_conta FROM usuarios WHERE id = :id");
     $stmt->bindParam(':id', $usuario_id, PDO::PARAM_INT);

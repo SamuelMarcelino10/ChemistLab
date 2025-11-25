@@ -3,6 +3,7 @@
 namespace chemistLab\models\entidades;
 
 class usuario {
+    //atributos
     private $id;
     private $nomeCompleto;
     private $email;
@@ -10,6 +11,7 @@ class usuario {
     private $senha;
     private $tipoConta;
 
+    //construtor
     public function __construct(
         $nomeCompleto, 
         $email, 
@@ -26,6 +28,7 @@ class usuario {
         $this->id = $id;
     }
 
+    //getters
     public function getId() { return $this->id; }
     public function getNomeCompleto() { return $this->nomeCompleto; }
     public function getEmail() { return $this->email; }
@@ -33,6 +36,7 @@ class usuario {
     public function getSenha() { return $this->senha; }
     public function getTipoConta() { return $this->tipoConta; }
 
+    //setters
     public function setId($id) { $this->id = $id; }
     public function setNomeCompleto($nomeCompleto) { $this->nomeCompleto = $nomeCompleto; }
     public function setEmail($email) { $this->email = $email; }

@@ -3,6 +3,7 @@
 namespace chemistLab\models\entidades;
 
 class agendamento {
+    //atributos
     private $id;
     private $dataAula;
     private $turno;
@@ -10,6 +11,7 @@ class agendamento {
     private $nomeExperimento;
     private $regenteId; 
 
+    //construtor
     public function __construct(
         $dataAula, 
         $turno, 
@@ -26,7 +28,7 @@ class agendamento {
         $this->id = $id;
     }
 
-    
+    //getters
     public function getId() { return $this->id; }
     public function getDataAula() { return $this->dataAula; }
     public function getTurno() { return $this->turno; }
@@ -34,5 +36,6 @@ class agendamento {
     public function getNomeExperimento() { return $this->nomeExperimento; }
     public function getRegenteId() { return $this->regenteId; } 
 
+    //setter
     public function setId($id) { $this->id = $id; }
 }

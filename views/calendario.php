@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+//verificacao inicial
 require_once '../config/db_connect.php'; 
 
 require_once '../models/dao/agendamentoDao.php'; 
@@ -10,6 +12,7 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     exit();
 }
 
+//busca aulas futuras
 try {
     $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
 

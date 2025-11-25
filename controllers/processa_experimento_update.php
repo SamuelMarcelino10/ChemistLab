@@ -1,5 +1,5 @@
 <?php
-
+//mesma logica do processa_agendamento_update.php
 session_start();
 require_once '../config/db_connect.php';
 

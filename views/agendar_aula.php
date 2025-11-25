@@ -2,6 +2,7 @@
 
 session_start();
 
+//verificacao inicial
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
     header("Location: login.php");

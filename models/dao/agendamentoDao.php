@@ -12,6 +12,7 @@ class agendamentoDao {
         $this->pdo = $pdo;
     }
 
+    //salva novo agendamento
     public function save(agendamento $agendamento) {
         $sql = "INSERT INTO agendamentos (data_aula, turno, nome_professor, nome_experimento, regente_id) 
                 VALUES (:data, :turno, :professor, :experimento, :regente_id)";
@@ -27,6 +28,7 @@ class agendamentoDao {
         ]);
     }
     
+    //busca agendamentos futuros
     public function findFuture() {
         $sql = "SELECT id, data_aula, turno, nome_professor, nome_experimento 
                 FROM agendamentos 
@@ -37,6 +39,7 @@ class agendamentoDao {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    //busca por id
     public function findById($id) {
         $sql = "SELECT id, data_aula, turno, nome_professor, nome_experimento, regente_id FROM agendamentos WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
@@ -59,6 +62,7 @@ class agendamentoDao {
         );
     }
     
+    //atualiza agendamento
     public function update(agendamento $agendamento) {
         $sql = "UPDATE agendamentos SET 
                 data_aula = :data, 
@@ -78,6 +82,7 @@ class agendamentoDao {
         ]);
     }
     
+    //deleta agendamento
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM agendamentos WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);

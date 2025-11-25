@@ -12,6 +12,7 @@ class equipamentoDao {
         $this->pdo = $pdo;
     }
 
+    //salva equipamento
     public function save(equipamento $equipamento) {
         $sql = "INSERT INTO estoque (nome, tipo, descricao, quantidade, unidade_medida, status_equipamento) 
                 VALUES (:nome, :tipo, :descricao, :quantidade, :unidade_medida, :status)";
@@ -28,6 +29,7 @@ class equipamentoDao {
         ]);
     }
     
+    //procura todos os equip salvos
     public function findAll($searchTerm = null) {
         $sql = "SELECT id, nome, tipo, quantidade, status_equipamento 
                 FROM estoque";
@@ -47,6 +49,7 @@ class equipamentoDao {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    //busca por id
     public function findById($id) {
         $stmt = $this->pdo->prepare("SELECT id, nome, tipo, descricao, quantidade, unidade_medida, status_equipamento FROM estoque WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -69,6 +72,7 @@ class equipamentoDao {
         );
     }
     
+    //atualiza equipamento
     public function update(equipamento $equipamento) {
         $sql = "UPDATE estoque SET 
                 nome = :nome, 
@@ -92,6 +96,7 @@ class equipamentoDao {
         ]);
     }
     
+    //deleta equipamento
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM estoque WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);

@@ -1,6 +1,8 @@
 <?php
 
 session_start();
+
+//verificacao inicial
 require_once '../config/db_connect.php'; 
 
 require_once '../models/entidades/experimento.php'; 
@@ -19,6 +21,7 @@ if (!$exp_id) {
 
 $experimento = null;
 
+//busca experimento no banco
 try {
     $experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
     $experimento = $experimentoDao->findById($exp_id);

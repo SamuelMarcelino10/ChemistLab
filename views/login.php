@@ -22,7 +22,7 @@ session_start();
         <?php
         if (isset($_SESSION['login_error'])) {
             echo '<div class="message error">' . htmlspecialchars($_SESSION['login_error']) . '</div>';
-            
+            //apaga mensagem de erro p nao aparecer de novo quando a pagina for atualizada
             unset($_SESSION['login_error']);
         }
         ?>

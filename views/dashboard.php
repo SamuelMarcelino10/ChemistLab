@@ -1,6 +1,6 @@
 <?php
 
-
+//verificacao inicial
 session_start();
 
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
@@ -9,6 +9,7 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     exit();
 }
 
+//pega nome do usuario
 $nome_usuario = $_SESSION['usuario_nome'];
 ?>
 <!DOCTYPE html>

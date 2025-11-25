@@ -1,5 +1,6 @@
 <?php
 
+//verificacao inicial
 session_start();
 require_once '../config/db_connect.php'; 
 
@@ -11,11 +12,13 @@ if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     exit();
 }
 
+//logica de busca
 $search_term = '';
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = filter_input(INPUT_GET, 'search', FILTER_SANITIZE_SPECIAL_CHARS);
 }
 
+//busca item no estoque
 try {
     $equipamentoDao = new \chemistLab\models\dao\equipamentoDao($pdo);
 

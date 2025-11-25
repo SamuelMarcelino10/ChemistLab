@@ -24,6 +24,7 @@ if (!$id) {
     exit();
 }
 
+//atualiza agendamento no bd
 try {
     $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
     $agendamento_original = $agendamentoDao->findById($id);

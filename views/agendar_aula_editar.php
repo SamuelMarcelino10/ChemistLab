@@ -6,6 +6,7 @@ require_once '../config/db_connect.php';
 require_once '../models/entidades/agendamento.php'; 
 require_once '../models/dao/agendamentoDao.php'; 
 
+//verificacao inicial
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: login.php"); exit();
 }
@@ -22,6 +23,7 @@ if (!$agenda_id) {
 
 $agendamento = null;
 
+//busca agendamento no banco
 try {
     $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
     $agendamento = $agendamentoDao->findById($agenda_id);

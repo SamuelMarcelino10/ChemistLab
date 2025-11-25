@@ -12,6 +12,7 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
     header("Location: ../views/dashboard.php"); exit();
 }
 
+//puxa id
 $item_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
 if (!$item_id) {
@@ -20,6 +21,7 @@ if (!$item_id) {
     exit();
 }
 
+//deleta agendamento do banco
 try {
     $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
 

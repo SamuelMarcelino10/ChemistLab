@@ -5,12 +5,14 @@ require_once '../config/db_connect.php';
 
 require_once '../models/dao/experimentoDao.php'; 
 
+//verificacao inicial
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     $_SESSION['login_error'] = "Acesso negado. Por favor, faça o login.";
     header("Location: login.php");
     exit();
 }
 
+//busca experimentos no banco
 try {
     $experimentoDao = new \chemistLab\models\dao\experimentoDao($pdo);
 

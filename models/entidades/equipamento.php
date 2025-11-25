@@ -3,6 +3,7 @@
 namespace chemistLab\models\entidades;
 
 class equipamento {
+    //atributos
     private $id;
     private $nome;
     private $tipo;
@@ -11,6 +12,7 @@ class equipamento {
     private $unidadeMedida;
     private $statusEquipamento;
 
+    //construtor
     public function __construct(
         $nome, 
         $tipo, 
@@ -29,6 +31,7 @@ class equipamento {
         $this->id = $id;
     }
 
+    //getters
     public function getId() { return $this->id; }
     public function getNome() { return $this->nome; }
     public function getTipo() { return $this->tipo; }
@@ -37,6 +40,7 @@ class equipamento {
     public function getUnidadeMedida() { return $this->unidadeMedida; }
     public function getStatusEquipamento() { return $this->statusEquipamento; }
 
+    //setters
     public function setId($id) { $this->id = $id; }
     public function setDescricao($descricao) { $this->descricao = $descricao; }
 }

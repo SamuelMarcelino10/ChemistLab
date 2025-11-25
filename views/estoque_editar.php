@@ -6,6 +6,7 @@ require_once '../config/db_connect.php';
 require_once '../models/entidades/equipamento.php';
 require_once '../models/dao/equipamentoDao.php';
 
+//verificacao inicial
 if (!isset($_SESSION['autenticado']) || $_SESSION['autenticado'] !== true) {
     header("Location: login.php"); exit();
 }
@@ -22,6 +23,7 @@ if (!$item_id) {
 
 $equipamento = null; 
 
+//busca equipamento no banco
 try {
     $equipamentoDao = new \chemistLab\models\dao\equipamentoDao($pdo);
 

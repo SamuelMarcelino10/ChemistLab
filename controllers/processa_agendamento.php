@@ -12,12 +12,14 @@ if ($_SESSION['usuario_tipo'] !== 'Regente') {
     header("Location: ../views/dashboard.php"); exit();
 }
 
+//pega dados do form
 $data_aula = filter_input(INPUT_POST, 'data_aula', FILTER_SANITIZE_SPECIAL_CHARS);
 $nome_professor = filter_input(INPUT_POST, 'nome_professor', FILTER_SANITIZE_SPECIAL_CHARS);
 $nome_experimento = filter_input(INPUT_POST, 'nome_experimento', FILTER_SANITIZE_SPECIAL_CHARS);
 $turno = filter_input(INPUT_POST, 'turno', FILTER_SANITIZE_SPECIAL_CHARS);
 $regente_id = $_SESSION['usuario_id']; 
 
+//cria agendamento c dados recebidos
 $agendamento = new \chemistLab\models\entidades\agendamento(
     $data_aula, 
     $turno, 
@@ -28,6 +30,7 @@ $agendamento = new \chemistLab\models\entidades\agendamento(
 
 $agendamentoDao = new \chemistLab\models\dao\agendamentoDao($pdo);
 
+//salva no banco
 if ($agendamentoDao->save($agendamento)) {
     $_SESSION['success_message'] = "Aula agendada com sucesso!";
     header("Location: ../views/calendario.php");

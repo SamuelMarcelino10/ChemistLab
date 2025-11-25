@@ -12,6 +12,7 @@ class experimentoDao {
         $this->pdo = $pdo;
     }
 
+    //salva experimento
     public function save(experimento $experimento) {
         $sql = "INSERT INTO experimentos (titulo, materiais, descricao, regente_id) 
                 VALUES (:titulo, :materiais, :descricao, :regente_id)";
@@ -26,6 +27,7 @@ class experimentoDao {
         ]);
     }
     
+    //procura todos os experimentos salvos
     public function findAll() {
         $sql = "SELECT id, titulo, descricao 
                 FROM experimentos 
@@ -35,6 +37,7 @@ class experimentoDao {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    //busca por id
     public function findById($id) {
         $sql = "SELECT id, titulo, materiais, descricao, regente_id FROM experimentos WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
@@ -56,6 +59,7 @@ class experimentoDao {
         );
     }
     
+    //atualiza experimento
     public function update(experimento $experimento) {
         $sql = "UPDATE experimentos SET 
                 titulo = :titulo, 
@@ -73,6 +77,7 @@ class experimentoDao {
         ]);
     }
     
+    //deleta experimento
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM experimentos WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
